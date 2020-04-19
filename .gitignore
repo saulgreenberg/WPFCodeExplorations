@@ -13,20 +13,65 @@ bin/
 packages/
 obj/
 **/StyleCop.Cache
+[Dd]ebug/
+[Rr]elease/
+x64/
+[Bb]in/
+[Oo]bj/
+# build folder is nowadays used for build scripts and should not be ignored
+#build/
 
 # NuGet Packages
+*.nupkg
 **/packages/*
+# except build/, which is used as an MSBuild target.
+!**/packages/build/
 
 # except build/, which is used as an MSBuild target.
 # and any custom dlls that aren't from NuGet
 !**/packages/build/
 
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+*_i.c
+*_p.c
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.log
+*.scc
+
 # Profiling results
+*.psess
 *.vsp
 *.vspx
+.vs
 
 # Visual Studio 2015 cache/options directory
 .vs/
+.vs/*
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -43,3 +88,54 @@ ToDo.docx
 ~$ToDo.docx
 *.tmp
 
+# OS generated files #
+.DS_Store*
+Icon?
+
+# =========================
+# Windows detritus
+# =========================
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Mac desktop service store files
+.DS_Store
+
+# SASS Compiler cache
+.sass-cache
+
+# Visual Studio 2014 CTP
+**/*.sln.ide
+
+# Visual Studio temp something
+.vs/
+
+# dotnet stuff
+project.lock.json
+
+# VS 2015+
+*.vc.vc.opendb
+*.vc.db
+
+# Rider
+.idea/
+
+# Visual Studio Code
+.vscode/
+
+# Output folder used by Webpack or other FE stuff
+**/node_modules/*
+**/wwwroot/*
+
+# SpecFlow specific
+*.feature.cs
+*.feature.xlsx.*
+*.Specs_*.html
