@@ -1,0 +1,30 @@
+﻿<Window x:Class="ImageTester.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ImageTester"
+        mc:Ignorable="d"
+        Title="Image Proceessing example with controls in popup window" Height="800" Width="1600" Loaded="Window_Loaded" >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" TextWrapping="Wrap" FontSize="14">
+            Illustrates several image processing capabilities using the Nuget ImageProcessing package. Two images are provided. Controls are displayed on user request in a pop-up window.
+        </TextBlock>
+        <Image Name="ManipulatedImage" Grid.Row="1" Grid.Column="0" />
+        <Image Name="SourceImage" Grid.Row="1" Grid.Column="1"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="2">
+            <Button Name="Image1" Content="Image 1" Click="Button_Click" Margin="10"/>
+            <Button Name="Image2" Content="Image 2" Click="Button_Click" Margin="10"/>
+            <Button Name="ShowControls" Content="ShowControls" Margin="100,10,10,10" Click="ShowControls_Click" />
+        </StackPanel>
+    </Grid>
+</Window>
