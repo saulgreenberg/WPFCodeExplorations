@@ -1,7 +1,6 @@
 # User-specific files 
 *.suo
 *.user
-*.sln
 
 
 # But keep these dll as they are custom and not retrievable via NuGet
