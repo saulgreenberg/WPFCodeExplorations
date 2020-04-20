@@ -8,10 +8,10 @@ namespace BackgroundImageLoader
     // Assumes that the app runs in Debug or Release, and that the image is in ..\..\..\Images\img.jpg
     public class JPGImagePaths
     {
-        public List<string> Paths {get; set;}
+        public List<string> Paths { get; set; }
 
         private readonly string imageFolderPath;
-        public JPGImagePaths ()
+        public JPGImagePaths()
         {
             this.imageFolderPath = AppDomain.CurrentDomain.BaseDirectory;
             this.imageFolderPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(this.imageFolderPath, @"..\..\..\Images"));

@@ -16,8 +16,17 @@ namespace BackgroundImageLoader
     /// </summary>
     public partial class ImageViewer : UserControl
     {
-        public int MaxRows { get; set; }
-        public int MaxColumns { get; set; }
+        public int NumberOfRows { get; set; }
+        public int NumberOfColumns { get; set; }
+        public int NumberOfCells
+        {
+            get
+            {
+                return NumberOfRows * NumberOfColumns;
+            }
+        }
+        // Required so we can perform a cancel
+        private BackgroundWorker BackgroundWorker;
 
         // Need to set this from the calling method before any loading is done every time the grid size is changed
         public List<ImageInCell> ImageInCells { get; set; }
@@ -52,12 +61,8 @@ namespace BackgroundImageLoader
         #endregion
 
         #region Async image loader using background worker
-        public BackgroundWorker BackgroundWorker;
 
-        public static void UiInvoke(Action a)
-        {
-            Application.Current.Dispatcher.Invoke(a);
-        }
+
         public void LoadImagesWorker(Nullable<int> desiredWidth, Nullable<int> desiredHeight, bool useTwoPasses)
         {
 
@@ -86,8 +91,7 @@ namespace BackgroundImageLoader
                         LoadImageProgressStatus lip = new LoadImageProgressStatus
                         {
                             ImageInCell = this.ImageInCells[imageInCell.Position],
-                            //BitmapImage = this.GetBitmapFromFile(imageInCell.Path, 10, 10),
-                            BitmapImage = this.GetBitmapFromFileAsync(imageInCell.Path, 10, 10).Result,
+                            BitmapImage = this.GetBitmapFromFileAsync(imageInCell.Path, desiredWidth / 2, desiredHeight / 2).Result,
                             Position = imageInCell.Position,
                         };
                         this.BackgroundWorker.ReportProgress(0, lip);
@@ -109,15 +113,7 @@ namespace BackgroundImageLoader
                         BitmapImage = this.GetBitmapFromFileAsync(imageInCell.Path, desiredWidth, desiredHeight).Result,
                         Position = imageInCell.Position,
                     };
-                    // Doesn't work as its not on the UI thread and its trying to update UI objects
-                    UiInvoke(() =>
-                    {
-                        UpdateImageLoadProgress(lip);
-                    });
-                    //Action foo = delegate { UpdateImageLoadProgress(lip); }; 
-                    //Dispatcher.Invoke(foo);
-
-                    //this.BackgroundWorker.ReportProgress(0, lip);
+                    this.BackgroundWorker.ReportProgress(0, lip);
                 }
             };
 
@@ -150,6 +146,7 @@ namespace BackgroundImageLoader
         // Async and sync versions below
         public Task<BitmapImage> GetBitmapFromFileAsync(string path, Nullable<int> desiredWidth, Nullable<int> desiredHeight)
         {
+            // Should probably replace this with true async file retrieval, if I can figure out how to do that.
             return Task.Run(() =>
             {
                 // Note to bridge the gap between the out parameter and the requirements of the task, this uses
@@ -184,12 +181,35 @@ namespace BackgroundImageLoader
             }
         }
 
+        #endregion
+
+        #region Public utility methods
         public void ClearGrid()
         {
             // Clear the Grid so we can start afresh
             this.Grid.RowDefinitions.Clear();
             this.Grid.ColumnDefinitions.Clear();
             this.Grid.Children.Clear();
+        }
+
+        public void CreateCellsToFitSpace(int desiredCellWidth, int desiredCellHeight)
+        {
+            // Clear everything as we need to start afresh
+            this.ClearGrid();
+
+            // Calculated the number of rows / columns that can fit into the available space,);
+            this.NumberOfColumns = Convert.ToInt32(this.ActualWidth / desiredCellWidth);
+            this.NumberOfRows = Convert.ToInt32(this.ActualHeight / desiredCellHeight);
+
+            // Add cells to the grid by first adding as many columns as can fit into the available space, then as many rows.
+            for (int thisColumn = 0; thisColumn < this.NumberOfColumns; thisColumn++)
+            {
+                this.Grid.ColumnDefinitions.Add(new System.Windows.Controls.ColumnDefinition() { Width = new GridLength(desiredCellWidth, GridUnitType.Pixel) });
+            }
+            for (int thisRow = 0; thisRow < this.NumberOfRows; thisRow++)
+            {
+                this.Grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(desiredCellHeight, GridUnitType.Pixel) });
+            }
         }
         #endregion
 
@@ -199,14 +219,23 @@ namespace BackgroundImageLoader
             if (lip.BitmapImage != null)
             {
                 this.ImageInCells[lip.ImageInCell.Position].Image.Source = lip.BitmapImage;
-                
             }
             else
             {
-                System.Windows.MessageBox.Show(String.Format("No bitmap image available at {0},{1}",
-                    this.ImageInCells[lip.ImageInCell.Position].Row,
-                    this.ImageInCells[lip.ImageInCell.Position].Column));
+                System.Windows.MessageBox.Show(String.Format("No bitmap image available at position {0}", lip.ImageInCell.Position));
             }
+        }
+
+        public void CancelUpdate()
+        {
+            try
+            {
+                if (this.BackgroundWorker != null)
+                {
+                    this.BackgroundWorker.CancelAsync();
+                }
+            }
+            catch { }
         }
         #endregion
     }
